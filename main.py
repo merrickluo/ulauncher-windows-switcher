@@ -11,8 +11,9 @@ from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 
 gi.require_version('Gtk', '3.0')
 gi.require_version('Wnck', '3.0')
-from gi.repository import Gtk
-from gi.repository import Wnck
+gi.require_version('Gdk', '3.0') 
+
+from gi.repository import Gtk, Gdk, Wnck, GdkX11
 
 XDG_FALLBACK = os.path.join(os.getenv('HOME'), '.cache')
 XDG_CACHE = os.getenv('XDG_CACHE_HOME', XDG_FALLBACK)
@@ -36,11 +37,12 @@ def list_windows():
 
 def activate(window):
     workspace = window.get_workspace()
+    now = GdkX11.x11_get_server_time(Gdk.get_default_root_window())
     if workspace is not None:
         # We need to first activate the workspace, otherwise windows on a different workspace might not become visible
-        workspace.activate(int(time.time()))
-
-    window.activate(int(time.time()))
+        workspace.activate(now)
+    
+    window.activate(now)
 
 
 class WindowItem:
